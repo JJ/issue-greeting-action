@@ -1,6 +1,9 @@
 name: 'First PR greeter'
 description: 'Greets when the first PR is made'
 author: 'JJ'
+branding:
+  icon: aperture
+  color: green
 inputs:
   repo-token:
     description: 'Token for the repo. Can be passed in using {{ secrets.GITHUB_TOKEN }}'
