@@ -4,14 +4,21 @@ Greets pull requests, using metadata such as user name. Forked from [`actions/fi
 
 # Usage
 
-See [action.yml](action.yml)
+See [this file for an example](https://github.com/JJ/dummy-actions-3/blob/master/.github/workflows/pr-greeting.yaml)
 
 ```yaml
-steps:
-- uses: actions/first-interaction@v1
-  with:
-    repo-token: ${{ secrets.GITHUB_TOKEN }}
-    pr-message: 'Greetings, **#**, and thanks for your first contribution'
+name: "PR Greeter"
+on: [pull_request]
+
+jobs:
+  pr-greeter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Greeter"
+        uses: JJ/pr-greeting-action@releases/v0
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          pr-message: "Hey **#** welcome to this repo"
 ```
 
 This action will check if it's the first pull request to the repo and
