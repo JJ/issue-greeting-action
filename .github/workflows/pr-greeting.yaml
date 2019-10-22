@@ -3,7 +3,7 @@ on: [pull_request]
 
 jobs:
   check_pr:
-    runs_on: ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
       - name: "Greeter"
         uses: JJ/pr-greeting-action@v0
