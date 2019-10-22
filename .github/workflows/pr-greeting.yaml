@@ -1,5 +1,12 @@
-steps:
-- uses: JJ/pr-greeting-action@v0
-  with:
-    repo-token: ${{ secrets.GITHUB_TOKEN }}
-    pr-message: "Message that will be displayed on users' first pr. Look, a `code block` for markdown."
+name: "PR Greeter"
+on: [pull_request]
+
+jobs:
+  check_pr:
+    runs_on: ubuntu-latest
+    steps:
+      - name: "Greeter"
+        uses: JJ/pr-greeting-action@v0
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          pr-message: "Message that will be displayed on users' first pr. Look, a `code block` for markdown."
