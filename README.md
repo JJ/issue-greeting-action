@@ -1,6 +1,6 @@
-# First Interaction
+# Greeting for first pull request
 
-An action for filtering pull requests and issues from first-time contributors.
+Greets pull requests, using metadata such as user name. Forked from [`actions/first interaction`](https://github.com/actions/first-interaction)
 
 # Usage
 

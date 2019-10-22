@@ -3,124 +3,50 @@ import * as github from '@actions/github';
 
 async function run() {
   try {
-    const issueMessage: string = core.getInput('issue-message');
-    const prMessage: string = core.getInput('pr-message');
-    if (!issueMessage && !prMessage) {
-      throw new Error(
-        'Action must have at least one of issue-message or pr-message set'
+      const prMessage: string = core.getInput('pr-message');
+      // Get client and context
+      const client: github.GitHub = new github.GitHub(
+	  core.getInput('repo-token', {required: true})
       );
-    }
-    // Get client and context
-    const client: github.GitHub = new github.GitHub(
-      core.getInput('repo-token', {required: true})
-    );
-    const context = github.context;
+      const context = github.context;
 
-    if (context.payload.action !== 'opened') {
-      console.log('No issue or PR was opened, skipping');
-      return;
-    }
+      if (context.payload.action !== 'opened') {
+	  console.log('No issue or PR was opened, skipping');
+	  return;
+      }
 
-    // Do nothing if its not a pr or issue
-    const isIssue: boolean = !!context.payload.issue;
-    if (!isIssue && !context.payload.pull_request) {
-      console.log(
-        'The event that triggered this action was not a pull request or issue, skipping.'
+      // Do nothing if its not their first contribution
+      console.log('Checking if its the users first contribution');
+      if (!context.payload.sender) {
+	  throw new Error('Internal error, no sender provided by GitHub');
+      }
+      const sender: string = context.payload.sender!.login;
+      const issue: {owner: string; repo: string; number: number} = context.issue;
+      let firstContribution: boolean = await isFirstPull(
+          client,
+          issue.owner,
+          issue.repo,
+          sender,
+          issue.number
       );
-      return;
-    }
 
-    // Do nothing if its not their first contribution
-    console.log('Checking if its the users first contribution');
-    if (!context.payload.sender) {
-      throw new Error('Internal error, no sender provided by GitHub');
-    }
-    const sender: string = context.payload.sender!.login;
-    const issue: {owner: string; repo: string; number: number} = context.issue;
-    let firstContribution: boolean = false;
-    if (isIssue) {
-      firstContribution = await isFirstIssue(
-        client,
-        issue.owner,
-        issue.repo,
-        sender,
-        issue.number
-      );
-    } else {
-      firstContribution = await isFirstPull(
-        client,
-        issue.owner,
-        issue.repo,
-        sender,
-        issue.number
-      );
-    }
-    if (!firstContribution) {
-      console.log('Not the users first contribution');
-      return;
-    }
+      if (!firstContribution) {
+	  console.log('Not the users first contribution');
+	  return;
+      }
 
-    // Do nothing if no message set for this type of contribution
-    const message: string = isIssue ? issueMessage : prMessage;
-    if (!message) {
-      console.log('No message provided for this type of contribution');
-      return;
-    }
-
-    const issueType: string = isIssue ? 'issue' : 'pull request';
-    // Add a comment to the appropriate place
-    console.log(`Adding message: ${message} to ${issueType} ${issue.number}`);
-    if (isIssue) {
-      await client.issues.createComment({
-        owner: issue.owner,
-        repo: issue.repo,
-        issue_number: issue.number,
-        body: message
-      });
-    } else {
+      console.log(`Adding message: ${prMessage}`);
       await client.pulls.createReview({
-        owner: issue.owner,
-        repo: issue.repo,
-        pull_number: issue.number,
-        body: message,
-        event: 'COMMENT'
+          owner: issue.owner,
+          repo: issue.repo,
+          pull_number: issue.number,
+          body: prMessage,
+          event: 'COMMENT'
       });
-    }
   } catch (error) {
     core.setFailed(error.message);
     return;
   }
-}
-
-async function isFirstIssue(
-  client: github.GitHub,
-  owner: string,
-  repo: string,
-  sender: string,
-  curIssueNumber: number
-): Promise<boolean> {
-  const {status, data: issues} = await client.issues.listForRepo({
-    owner: owner,
-    repo: repo,
-    creator: sender,
-    state: 'all'
-  });
-
-  if (status !== 200) {
-    throw new Error(`Received unexpected API status code ${status}`);
-  }
-
-  if (issues.length === 0) {
-    return true;
-  }
-
-  for (const issue of issues) {
-    if (issue.number < curIssueNumber && !issue.pull_request) {
-      return false;
-    }
-  }
-
-  return true;
 }
 
 // No way to filter pulls by creator
