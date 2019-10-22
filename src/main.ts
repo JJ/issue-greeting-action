@@ -16,12 +16,13 @@ async function run() {
       }
 
       // Do nothing if its not their first contribution
-      console.log('Checking if its the users first contribution');
+      console.log("Checking if it's the users first contribution");
       if (!context.payload.sender) {
 	  throw new Error('Internal error, no sender provided by GitHub');
       }
       const sender: string = context.payload.sender!.login;
       const issue: {owner: string; repo: string; number: number} = context.issue;
+      console.log( "Sender " + sender + " issue " + issue );
       let firstContribution: boolean = await isFirstPull(
           client,
           issue.owner,
