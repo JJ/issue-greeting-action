@@ -22,7 +22,7 @@ async function run() {
       }
       const sender: string = context.payload.sender!.login;
       const issue: {owner: string; repo: string; number: number} = context.issue;
-      console.log( "Sender " + sender + " issue " + issue );
+      console.log( "Sender " + sender);
       let firstContribution: boolean = await isFirstPull(
           client,
           issue.owner,
