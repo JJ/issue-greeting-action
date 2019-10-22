@@ -42,7 +42,7 @@ async function run() {
           owner: issue.owner,
           repo: issue.repo,
           pull_number: issue.number,
-          body: prMessage,
+          body: message,
           event: 'COMMENT'
       });
   } catch (error) {
