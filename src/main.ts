@@ -38,12 +38,11 @@ async function run() {
 
       const message: string = prMessage.replace(/#/, sender);
       console.log('Adding message: ' + message + ' owner ' + context.repo.owner + ' repo ' + context.repo.repo + ' issue repo ' + issue.repo );
-      const res = await client.pulls.createReview({
+      const res = await client.issues.createComment({
           owner: context.repo.owner,
           repo: context.repo.repo,
-          pull_number: issue.number,
-          body: message,
-          event: 'COMMENT'
+          issue_number: issue.number,
+          body: message
       });
       console.log(res);
   } catch (error) {
