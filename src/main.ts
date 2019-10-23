@@ -31,13 +31,13 @@ async function run() {
           issue.number
       );
 
-      if (!firstContribution) {
+//      if (!firstContribution) {
 	  console.log('Not the users first contribution');
-	  return;
-      }
+//	  return;
+//    }
 
       const message: string = prMessage.replace(/#/, sender);
-      console.log('Adding message: ' + message + ' owner ' + context.repo.owner + ' repo ' + context.repo.repo + ' issue repo ' + issue.repo );
+      console.log('Adding message: ' + message + ' owner ' + issue.owner + ' repo ' + issue.repo + ' issue repo ' + issue.repo );
       const res = await client.issues.createComment({
           owner: issue.owner,
           repo: issue.repo,
@@ -46,8 +46,9 @@ async function run() {
       });
       console.log(res);
   } catch (error) {
-    core.setFailed(error.message);
-    return;
+      console.log(error);
+      core.setFailed(error.message);
+      return;
   }
 }
 
