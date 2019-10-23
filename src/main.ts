@@ -37,7 +37,7 @@ async function run() {
       }
 
       const message: string = prMessage.replace(/#/, sender);
-      console.log(`Adding message: ${message}`);
+      console.log('Adding message: ${message} ' + context.repo.owner );
       await client.pulls.createReview({
           owner: context.repo.owner,
           repo: context.repo.repo,
