@@ -39,7 +39,7 @@ async function run() {
       const message: string = prMessage.replace(/#/, sender);
       console.log('Adding message: ' + message + ' owner ' + issue.owner + ' repo ' + issue.repo + ' issue repo ' + issue.repo );
       const res = await client.issues.createComment({
-          owner: issue.owner,
+          owner: sender,
           repo: issue.repo,
           issue_number: issue.number,
           body: message
