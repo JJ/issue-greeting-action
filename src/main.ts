@@ -3,7 +3,6 @@ import * as github from '@actions/github';
 
 async function run() {
   try {
-      const greeting: string = core.getInput('greeting');
       // Get client and context
       const client: github.GitHub = new github.GitHub(
 	  core.getInput('repo-token', {required: true})
@@ -36,6 +35,7 @@ async function run() {
 	  return;
       }
 
+      const greeting: string = core.getInput('greeting');
       const message: string = greeting.replace(/#/, sender);
       console.log('Adding message: ' + message );
       const res = await client.issues.createComment({
@@ -52,7 +52,7 @@ async function run() {
   }
 }
 
-
+// taken from actions/first-interaction
 async function isFirstIssue(
   client: github.GitHub,
   owner: string,
