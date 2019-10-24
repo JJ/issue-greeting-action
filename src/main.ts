@@ -3,7 +3,7 @@ import * as github from '@actions/github';
 
 async function run() {
   try {
-      const prMessage: string = core.getInput('pr-message');
+      const greeting: string = core.getInput('greeting');
       // Get client and context
       const client: github.GitHub = new github.GitHub(
 	  core.getInput('repo-token', {required: true})
@@ -23,23 +23,23 @@ async function run() {
       const sender: string = context.payload.sender!.login;
       const issue: {owner: string; repo: string; number: number} = context.issue;
       console.log( "Sender " + sender);
-      let firstContribution: boolean = await isFirstPull(
-          client,
-          issue.owner,
-          issue.repo,
-          sender,
-          issue.number
+      let firstContribution: boolean = await isFirstIssue(
+        client,
+        issue.owner,
+        issue.repo,
+        sender,
+        issue.number
       );
 
-//      if (!firstContribution) {
+      if (!firstContribution) {
 	  console.log('Not the users first contribution');
-//	  return;
-//    }
+	  return;
+      }
 
-      const message: string = prMessage.replace(/#/, sender);
+      const message: string = greeting.replace(/#/, sender);
       console.log('Adding message: ' + message + ' owner ' + issue.owner + ' repo ' + issue.repo + ' issue repo ' + issue.repo );
       const res = await client.issues.createComment({
-          owner: sender,
+          owner: issue.owner,
           repo: issue.repo,
           issue_number: issue.number,
           body: message
@@ -52,22 +52,18 @@ async function run() {
   }
 }
 
-// No way to filter pulls by creator
-async function isFirstPull(
+
+async function isFirstIssue(
   client: github.GitHub,
   owner: string,
   repo: string,
   sender: string,
-  curPullNumber: number,
-  page: number = 1
+  curIssueNumber: number
 ): Promise<boolean> {
-  // Provide console output if we loop for a while.
-  console.log('Checking...');
-  const {status, data: pulls} = await client.pulls.list({
+  const {status, data: issues} = await client.issues.listForRepo({
     owner: owner,
     repo: repo,
-    per_page: 100,
-    page: page,
+    creator: sender,
     state: 'all'
   });
 
@@ -75,25 +71,18 @@ async function isFirstPull(
     throw new Error(`Received unexpected API status code ${status}`);
   }
 
-  if (pulls.length === 0) {
+  if (issues.length === 0) {
     return true;
   }
 
-  for (const pull of pulls) {
-    const login: string = pull.user.login;
-    if (login === sender && pull.number < curPullNumber) {
+  for (const issue of issues) {
+    if (issue.number < curIssueNumber && !issue.pull_request) {
       return false;
     }
   }
 
-  return await isFirstPull(
-    client,
-    owner,
-    repo,
-    sender,
-    curPullNumber,
-    page + 1
-  );
+  return true;
 }
+
 
 run();

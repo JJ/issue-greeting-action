@@ -1,5 +1,5 @@
-name: 'First PR greeter'
-description: 'Greets when the first PR is made'
+name: 'First issue greeter'
+description: 'Greets when the first issue to a repo is made'
 author: 'JJ'
 branding:
   icon: aperture
@@ -8,7 +8,7 @@ inputs:
   repo-token:
     description: 'Token for the repo. Can be passed in using {{ secrets.GITHUB_TOKEN }}'
     required: true
-  pr-message:
+  greeting:
     description: 'Comment to post on an individuals first pull request'
 runs:
   using: 'node12'
