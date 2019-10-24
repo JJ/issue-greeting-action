@@ -1,5 +1,5 @@
 name: "Issue Greeter"
-on: [issue]
+on: [issues]
 
 jobs:
   pr-greeter:
