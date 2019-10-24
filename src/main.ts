@@ -11,7 +11,7 @@ async function run() {
       const context = github.context;
 
       if (context.payload.action !== 'opened') {
-	  console.log('No issue or PR was opened, skipping');
+	  console.log('No issue was opened, skipping');
 	  return;
       }
 
@@ -37,7 +37,7 @@ async function run() {
       }
 
       const message: string = greeting.replace(/#/, sender);
-      console.log('Adding message: ' + message + ' owner ' + issue.owner + ' repo ' + issue.repo + ' issue repo ' + issue.repo );
+      console.log('Adding message: ' + message );
       const res = await client.issues.createComment({
           owner: issue.owner,
           repo: issue.repo,
