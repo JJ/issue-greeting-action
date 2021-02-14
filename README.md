@@ -4,7 +4,7 @@ Greets pull requests, using metadata such as user name. Forked from [`actions/fi
 
 # Usage
 
-See [this file for an example](https://github.com/JJ/dummy-actions-3/blob/master/.github/workflows/pr-greeting.yaml)
+Here is an example that you could put in .github/workflows/pr-greeting.yaml
 
 ```yaml
 name: "PR Greeter"
@@ -15,10 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Greeter"
-        uses: JJ/pr-greeting-action@releases/v0
+        uses: JJ/pr-greeting-action@releases/v1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          pr-message: "Hey **#** welcome to this repo"
+          greeting: "Hey **#** welcome to this repo"
 ```
 
 This action will check if it's the first pull request to the repo and
